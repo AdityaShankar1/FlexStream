@@ -41,12 +41,6 @@ graph TD
 * **Data Layer**: Apache Cassandra (Permanent Store), Redis (Caching Layer)
 * **Architecture**: Hexagonal / Ports & Adapters
 
-## 🛠️ System Flow
-1. **Ingestion**: 1.2M records processed via PySpark into DuckDB.
-2. **Persistence**: Structured ratings stored in Cassandra.
-3. **Speed**: Frequently accessed user history cached in Redis.
-4. **Interface**: REST API providing sub-100ms response times for user history.
-
 ## 🏃 How to Run
 1. **Containers**: `docker-compose up -d`
 2. **Backend**: `mvn spring-boot:run`
