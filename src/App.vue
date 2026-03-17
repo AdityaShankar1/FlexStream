@@ -89,22 +89,14 @@ onMounted(fetchHistory);
 </template>
 
 <style>
-/* Brownish Vintage Celluloid Palette */
-:root { 
-  --bg: #2b231d;       /* Warm sepia-brown background */
-  --card: #1c1612;     /* Darker, richer brown for card */
-  --border: #4a3f35;   /* Aged leather/bronze border */
-  --text: #e0d5c1;     /* Creamy, aged paper text color */
-  --blue: #58a6ff;     /* Keeping the button pop */
-}
-
+:root { --bg: #0d1117; --card: #161b22; --border: #30363d; --text: #c9d1d9; --blue: #58a6ff; }
 body { background: var(--bg); color: var(--text); font-family: sans-serif; margin: 0; padding: 0; }
 
 .main-container {
   display: flex;
   justify-content: space-between;
   min-height: 100vh;
-  background: #000; /* Outer edges remain black for mask effect */
+  background: #000;
 }
 
 .film-strip {
@@ -112,7 +104,7 @@ body { background: var(--bg); color: var(--text); font-family: sans-serif; margi
   background-image: url('/film-frames.png');
   background-repeat: repeat-y;
   background-size: contain;
-  opacity: 0.3; /* Subtle integration */
+  opacity: 0.6;
   flex-shrink: 0;
 }
 
@@ -122,7 +114,7 @@ body { background: var(--bg); color: var(--text); font-family: sans-serif; margi
   justify-content: center;
   align-items: flex-start;
   padding: 40px 0;
-  background: var(--bg); /* Celluloid tone applies to the content area */
+  background: var(--bg);
 }
 
 .card {
@@ -132,16 +124,16 @@ body { background: var(--bg); color: var(--text); font-family: sans-serif; margi
   width: 90%;
   max-width: 900px;
   padding: 30px;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.7);
 }
 
 .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
 h1 { margin: 0; font-size: 1.8rem; color: #fff; letter-spacing: -0.5px; }
-.status { margin: 5px 0 0; color: #a19586; font-size: 0.9rem; } /* Adjusted status color for sepia */
+.status { margin: 5px 0 0; color: #8b949e; font-size: 0.9rem; }
 
 .toolbar { display: flex; gap: 15px; margin-bottom: 30px; }
 .search-box, .sort-box { 
-  background: #1c1612; 
+  background: #0d1117; 
   border: 1px solid var(--border); 
   color: #fff; 
   padding: 12px; 
@@ -152,7 +144,7 @@ h1 { margin: 0; font-size: 1.8rem; color: #fff; letter-spacing: -0.5px; }
 
 .table-wrap { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
 table { width: 100%; border-collapse: collapse; }
-th { background: #261f1a; padding: 15px; text-align: left; color: #a19586; font-size: 0.85rem; border-bottom: 1px solid var(--border); }
+th { background: #21262d; padding: 15px; text-align: left; color: #8b949e; font-size: 0.85rem; border-bottom: 1px solid var(--border); }
 td { padding: 15px; border-bottom: 1px solid var(--border); font-size: 1rem; }
 .center { text-align: center; }
 
@@ -162,9 +154,8 @@ td { padding: 15px; border-bottom: 1px solid var(--border); font-size: 1rem; }
   border-radius: 20px; 
   font-size: 0.9rem;
 }
-/* Badges slightly softened for sepia theme */
-.good { background: rgba(46, 160, 67, 0.15); color: #4ade80; border: 1px solid rgba(63, 185, 80, 0.2); }
-.bad { background: rgba(248, 81, 73, 0.15); color: #f87171; border: 1px solid rgba(248, 81, 115, 0.2); }
+.good { background: rgba(46, 160, 67, 0.2); color: #3fb950; border: 1px solid rgba(63, 185, 80, 0.3); }
+.bad { background: rgba(248, 81, 73, 0.2); color: #f85149; border: 1px solid rgba(248, 81, 115, 0.3); }
 
 .refresh-btn { 
   background: var(--blue); 
