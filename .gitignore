@@ -1,0 +1,10 @@
+target/
+*.class
+.mvn/
+.idea/
+.settings/
+.project
+.classpath
+bin/
+*.csv
+.DS_Store
