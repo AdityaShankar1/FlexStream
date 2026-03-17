@@ -32,6 +32,9 @@ graph TD
     style F fill:#a41e11,color:#fff
 ```
 
+<img width="808" height="399" alt="image" src="https://github.com/user-attachments/assets/60accdac-ca6e-4785-9000-733c93ccc3fb" />
+
+
 ## 🚀 Tech Stack
 * **Frontend**: Vue.js 3 (Composition API), Vite, Axios
 * **Backend**: Spring Boot 3, Java 21
