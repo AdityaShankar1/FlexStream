@@ -1,8 +1,10 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import axios from 'axios';
 
 const ratings = ref([]);
+const searchQuery = ref('');
+const sortBy = ref('recent'); 
 const error = ref(null);
 const loading = ref(true);
 
@@ -11,16 +13,27 @@ const fetchHistory = async () => {
   error.value = null;
   try {
     const res = await axios.get('/api/history/1');
-    // Handle both raw string lists and object lists
     ratings.value = res.data.map(item => {
       return typeof item === 'string' ? JSON.parse(item) : item;
     });
   } catch (err) {
-    error.value = "Failed to fetch data: " + (err.response?.status || "Check Docker/Spring");
+    error.value = "Backend unreachable on 8080. Is Spring running?";
+    console.error(err);
   } finally {
     loading.value = false;
   }
 };
+
+const processedRatings = computed(() => {
+  let list = [...ratings.value].filter(r => 
+    r.title.toLowerCase().includes(searchQuery.value.toLowerCase())
+  );
+  
+  if (sortBy.value === 'rating') {
+    return list.sort((a, b) => b.rating - a.rating);
+  }
+  return list; 
+});
 
 onMounted(fetchHistory);
 </script>
@@ -30,13 +43,21 @@ onMounted(fetchHistory);
     <div class="card">
       <div class="header">
         <div>
-          <h1>FlexStream History</h1>
-          <p class="subtitle">User ID: 1 | Redis Cache Active</p>
+          <h1>FlexStream Dashboard</h1>
+          <p class="status-text">Connected to Redis | {{ ratings.length }} Titles</p>
         </div>
-        <button @click="fetchHistory" class="refresh-icon" title="Refresh">🔄</button>
+        <button @click="fetchHistory" class="btn-refresh">Refresh Data</button>
       </div>
 
-      <div v-if="loading" class="loader">Accessing Redis nodes...</div>
+      <div class="toolbar">
+        <input v-model="searchQuery" placeholder="Search movies..." class="search-input" />
+        <select v-model="sortBy" class="select-input">
+          <option value="recent">Most Recent</option>
+          <option value="rating">Top Rated</option>
+        </select>
+      </div>
+
+      <div v-if="loading" class="info">Fetching...</div>
       <div v-else-if="error" class="error-msg">{{ error }}</div>
       
       <div v-else class="table-container">
@@ -45,18 +66,16 @@ onMounted(fetchHistory);
             <tr>
               <th>Title</th>
               <th class="center">Rating</th>
-              <th class="right">Movie ID</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="r in ratings" :key="r.movieId">
-              <td class="title-cell">{{ r.title }}</td>
+            <tr v-for="r in processedRatings" :key="r.movieId">
+              <td>{{ r.title }}</td>
               <td class="center">
-                <span :class="['rating-badge', r.rating >= 4 ? 'high' : 'low']">
+                <span :class="['score', r.rating >= 4 ? 'high' : 'low']">
                   {{ r.rating }}
                 </span>
               </td>
-              <td class="right dim">{{ r.movieId }}</td>
             </tr>
           </tbody>
         </table>
@@ -66,65 +85,23 @@ onMounted(fetchHistory);
 </template>
 
 <style>
-:root {
-  --bg: #0f172a;
-  --card: #1e293b;
-  --text: #f8fafc;
-  --accent: #38bdf8;
-  --border: #334155;
-}
-
-body { 
-  background: var(--bg); 
-  color: var(--text); 
-  font-family: 'Inter', -apple-system, sans-serif; 
-  margin: 0; 
-}
-
-.dashboard { display: flex; justify-content: center; padding: 40px 20px; }
-
-.card { 
-  background: var(--card); 
-  padding: 30px; 
-  border-radius: 12px; 
-  width: 100%; 
-  max-width: 800px; 
-  box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-  border: 1px solid var(--border);
-}
-
-.header { 
-  display: flex; 
-  justify-content: space-between; 
-  align-items: flex-start;
-  margin-bottom: 30px;
-}
-
-h1 { margin: 0; font-size: 1.5rem; color: var(--accent); }
-.subtitle { margin: 5px 0 0; color: #94a3b8; font-size: 0.85rem; }
-
-.refresh-icon {
-  background: none; border: none; font-size: 1.2rem; cursor: pointer; padding: 5px;
-  transition: transform 0.3s;
-}
-.refresh-icon:hover { transform: rotate(180deg); }
-
-.table-container { overflow-x: auto; }
-table { width: 100%; border-collapse: collapse; text-align: left; }
-th { padding: 12px; border-bottom: 2px solid var(--border); font-size: 0.8rem; text-transform: uppercase; color: #94a3b8; }
-td { padding: 14px 12px; border-bottom: 1px solid var(--border); font-size: 0.95rem; }
-
-.title-cell { font-weight: 500; }
+:root { --bg: #0d1117; --card: #161b22; --border: #30363d; --text: #c9d1d9; --blue: #58a6ff; }
+body { background: var(--bg); color: var(--text); font-family: -apple-system, sans-serif; margin: 0; padding: 20px; }
+.dashboard { display: flex; justify-content: center; }
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; width: 100%; max-width: 700px; padding: 24px; }
+.header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+h1 { margin: 0; font-size: 1.25rem; color: white; }
+.status-text { margin: 4px 0 0; font-size: 0.8rem; color: #8b949e; }
+.toolbar { display: flex; gap: 10px; margin-bottom: 20px; }
+.search-input, .select-input { background: #0d1117; border: 1px solid var(--border); color: white; padding: 8px 12px; border-radius: 6px; font-size: 0.9rem; }
+.search-input { flex-grow: 1; }
+.table-container { border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+table { width: 100%; border-collapse: collapse; }
+th { background: #21262d; padding: 12px; text-align: left; font-size: 0.8rem; color: #8b949e; border-bottom: 1px solid var(--border); }
+td { padding: 12px; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
 .center { text-align: center; }
-.right { text-align: right; }
-.dim { color: #64748b; font-size: 0.8rem; }
-
-.rating-badge {
-  padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 0.8rem;
-}
-.high { background: #065f46; color: #34d399; }
-.low { background: #7f1d1d; color: #f87171; }
-
-.loader { padding: 40px; text-align: center; color: var(--accent); }
-.error-msg { padding: 20px; background: #451a1a; color: #f87171; border-radius: 6px; }
+.score { font-weight: bold; padding: 2px 8px; border-radius: 12px; font-size: 0.8rem; }
+.high { background: rgba(46, 160, 67, 0.15); color: #3fb950; }
+.low { background: rgba(248, 81, 73, 0.15); color: #f85149; }
+.btn-refresh { background: #238636; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-weight: 600; }
 </style>
