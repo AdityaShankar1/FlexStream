@@ -1,26 +1,23 @@
-# FlexStream: High-Scale Activity Stream MVP
+# FlexStream: Real-Time Movie Analytics Dashboard
 
-A high-performance movie activity stream built with **Java 21**, **Spring Boot 3**, and **Apache Cassandra**. Designed to handle massive datasets (25M+ rows) using modern concurrency patterns.
+A high-performance movie rating dashboard utilizing a **Medallion Architecture** (Bronze/Silver/Gold) data pipeline and a vintage-themed Vue.js frontend.
 
-## 🚀 Key Features
-* **Virtual-Threaded Ingestion:** Utilizes Java 21 Virtual Threads to ingest 1M+ records from CSV to Cassandra without I/O blocking.
-* **NoSQL Schema Design:** Optimized Cassandra schema using Partition Keys for Users and Clustering Columns for reverse-chronological activity.
-* **Service-Level Joins:** Decoupled metadata strategy that joins NoSQL behavior data with in-memory CSV metadata for sub-millisecond API response times.
-* **Hexagonal Architecture:** Strict separation of concerns between Domain, Repository, and Service layers.
+## 🚀 Tech Stack
+* **Frontend**: Vue.js 3 (Composition API), Vite, Axios
+* **Backend**: Spring Boot 3, Java 21
+* **Data Layer**: Apache Cassandra (Permanent Store), Redis (Caching Layer)
+* **Architecture**: Hexagonal / Ports & Adapters
 
-## 🛠️ Tech Stack
-* **Backend:** Java 21, Spring Boot 3, Spring Data Cassandra
-* **Database:** Apache Cassandra (Dockerized)
-* **Performance:** Java Virtual Threads (Project Loom)
-* **Tools:** Maven, Docker, cqlsh
+## 🛠️ System Architecture
+1. **Ingestion**: 1.2M records processed via PySpark into DuckDB.
+2. **Persistence**: Structured ratings stored in Cassandra.
+3. **Speed**: Frequently accessed user history cached in Redis.
+4. **Interface**: REST API providing sub-100ms response times for user history.
 
-## 📈 API Endpoints
-| Endpoint | Description |
-| :--- | :--- |
-| `GET /api/history/{userId}` | Returns top 10 recent ratings for a user with movie titles. |
-| `GET /api/top` | Returns globally top-rated (5.0) movies across the platform. |
+## 🏃 How to Run
+1. **Containers**: `docker-compose up -d` (Start Cassandra & Redis)
+2. **Backend**: `mvn spring-boot:run` (Port 8080)
+3. **Frontend**: `cd flexstream-frontend && npm install && npm run dev` (Port 5173)
 
-## 🏗️ Local Setup
-1. Start Cassandra: `docker run --name flex-cassandra -p 9042:9042 -d cassandra:latest`
-2. Build and Run: `mvn spring-boot:run`
-3. Test: `curl -s http://localhost:8080/api/history/1 | python3 -m json.tool`
+## 🎨 UI Design
+Features a cinematic "Vintage Celluloid" theme with dynamic film-strip borders and real-time movie filtering.
